@@ -1,3 +1,46 @@
+# JumysAI Career Agent — student project (level A)
+
+An autonomous job-search agent for the Kazakhstan job market: the user gives a goal ("Junior Data Analyst in Almaty"). The agent then searches vacancies, analyses the skill match and decides between a learning plan and a tailored resume, and it prepares an application only with the user's approval. Design: [reports/proposal.md](reports/proposal.md). Progress: `reports/week-NN.md`.
+
+**Status (Week 11):** the Claude API adapter and the first working request are done. Tools and the agent loop come in Weeks 12–14.
+
+### Setup
+
+Requires Python 3.12+.
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate          # Windows; macOS/Linux: source .venv/bin/activate
+pip install -e ".[dev]"
+copy .env.example .env          # macOS/Linux: cp .env.example .env — then set LLM_API_KEY
+```
+
+### Run
+
+```bash
+python -m career_agent ask "What skills does a Junior Data Analyst need in Almaty?"
+```
+
+### Test
+
+```bash
+pytest          # offline: the Claude SDK is replaced by a fake client
+npm test        # instructor starter checks (Node 22+)
+```
+
+### Code layout
+
+| Path | Purpose |
+|---|---|
+| `src/career_agent/config.py` | Settings from environment / `.env`, with validation; the API key is never printed |
+| `src/career_agent/llm.py` | Claude adapter: `ClaudeClient.complete(messages, system, tools)` → `LLMResponse` (text, tool calls, usage); API failures become a classified `LLMError` (retryable or not) |
+| `src/career_agent/cli.py` | CLI entry point (`ask`) |
+| `tests/test_llm.py` | Adapter and config tests |
+
+The rest of this file is the instructor's original assignment text.
+
+---
+
 # AI Agents — Final Project
 
 **CSS 4007 — Artificial Intelligence · Individual project · Your choice of topic**
