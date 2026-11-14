@@ -16,7 +16,11 @@ from .config import Settings
 
 # Server-side refusal fallback: if the main model declines a request for a policy
 # reason, the API re-runs it on a suitable fallback model inside the same call.
+# Only some models support it (not Haiku), so it is enabled per model.
 FALLBACK_BETA = "server-side-fallback-2026-07-01"
+FALLBACK_MODELS = frozenset(
+    {"claude-fable-5-2", "claude-fable-5-1", "claude-opus-5-5", "claude-opus-5", "claude-sonnet-5-5"}
+)
 
 
 @dataclass(frozen=True)
@@ -89,9 +93,10 @@ class ClaudeClient:
             "max_tokens": self.settings.max_tokens,
             "messages": messages,
             "output_config": {"effort": self.settings.effort},
-            "betas": [FALLBACK_BETA],
-            "fallbacks": "default",
         }
+        if self.settings.model in FALLBACK_MODELS:
+            request["betas"] = [FALLBACK_BETA]
+            request["fallbacks"] = "default"
         if system:
             request["system"] = system
         if tools:

@@ -84,8 +84,9 @@ Every tool has a permission level that is enforced in code. The LLM can request 
 
 ## Model Selection
 
-- **Main model:** Claude (Anthropic Messages API with native tool use). The default is `claude-opus-5-5`, Anthropic's current default model for agentic tool use, at `medium` effort. The model name can be changed in configuration (`LLM_MODEL`), so a cheaper model (`claude-haiku-5-5`) can be used for development runs. *(Revised in Week 11: the first draft named `claude-sonnet-5-5` as the default.)*
-- **Refusal fallback:** the server-side `fallbacks: "default"` option is enabled. If the main model declines a request for a policy reason, the API re-runs it on a fallback model in the same call.
+- **Main model:** Claude Haiku 5.5 (`claude-haiku-5-5`) through the Anthropic Messages API with native tool use, at `medium` effort. It is the cheapest current Claude model ($0.10 / $0.50 per 1M input / output tokens) and supports tool use. This matters for a student budget: development, the test runs and the scenario evaluation (about 30 live runs) all use the paid API.
+- **Configurable:** the model can be changed in configuration (`LLM_MODEL`), so a stronger model (`claude-sonnet-5-5` or `claude-opus-5-5`) can be compared on the same scenarios if the budget allows. For those models the adapter also enables the server-side refusal fallback; Haiku does not support it.
+- *(Revised in Week 11: the first draft named `claude-sonnet-5-5` as the default, then `claude-opus-5-5` was tried. Haiku 5.5 was chosen because of cost.)*
 - **Why Claude:** the diploma backend already uses the Anthropic API, so the agent can be ported without changing providers. Tool use is supported natively and returns structured arguments that can be validated.
 - **Credentials:** read from environment variables (`LLM_API_KEY`, `LLM_MODEL`). `.env` is git-ignored; only `.env.example` is committed.
 - **Tests:** use a scripted mock LLM client, so the whole test suite runs offline, deterministically and without an API key.

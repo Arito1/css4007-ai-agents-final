@@ -34,7 +34,7 @@ def message(content, stop_reason="end_turn", stop_details=None):
         content=content,
         stop_reason=stop_reason,
         stop_details=stop_details,
-        model="claude-opus-5-5",
+        model="claude-haiku-5-5",
         usage=SimpleNamespace(input_tokens=12, output_tokens=34),
     )
 
@@ -70,18 +70,26 @@ def test_text_response_is_parsed(settings):
     assert len(response.raw_content) == 2  # thinking block kept for the history
 
 
-def test_request_uses_configured_model_effort_and_fallback(settings):
+def test_request_uses_configured_model_and_effort(settings):
     sdk = FakeSDK(message([text("ok")]))
     ClaudeClient(settings, sdk=sdk).complete(
         [{"role": "user", "content": "hi"}], system="be brief", tools=[{"name": "t"}]
     )
 
     request = sdk.calls[0]
-    assert request["model"] == "claude-opus-5-5"
+    assert request["model"] == "claude-haiku-5-5"
     assert request["output_config"] == {"effort": "medium"}
-    assert request["fallbacks"] == "default"
+    assert "fallbacks" not in request  # Haiku has no server-side refusal fallback
     assert request["system"] == "be brief"
     assert request["tools"] == [{"name": "t"}]
+
+
+def test_fallback_enabled_only_for_supported_models():
+    sdk = FakeSDK(message([text("ok")]))
+    ClaudeClient(Settings(api_key="k", model="claude-opus-5-5"), sdk=sdk).complete(
+        [{"role": "user", "content": "hi"}]
+    )
+    assert sdk.calls[0]["fallbacks"] == "default"
 
 
 def test_tool_use_blocks_become_tool_calls(settings):

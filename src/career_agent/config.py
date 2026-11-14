@@ -9,7 +9,8 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
-DEFAULT_MODEL = "claude-opus-5-5"
+# Haiku 5.5: cheapest current Claude model ($0.10 / $0.50 per 1M tokens) with tool use.
+DEFAULT_MODEL = "claude-haiku-5-5"
 ALLOWED_EFFORT = ("low", "medium", "high", "xhigh", "max")
 
 
