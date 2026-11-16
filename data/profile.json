@@ -1,0 +1,42 @@
+{
+  "id": "demo-001",
+  "name": "Aigerim Demo",
+  "target_role": "Junior Data Analyst",
+  "city": "Almaty",
+  "level": "junior",
+  "languages": ["Kazakh", "Russian", "English (B2)"],
+  "skills": [
+    {"name": "Python", "level": "intermediate", "confirmed": true},
+    {"name": "SQL", "level": "intermediate", "confirmed": true},
+    {"name": "PostgreSQL", "level": "basic", "confirmed": true},
+    {"name": "Excel", "level": "advanced", "confirmed": true},
+    {"name": "pandas", "level": "intermediate", "confirmed": true},
+    {"name": "Statistics", "level": "basic", "confirmed": true},
+    {"name": "Data Visualization", "level": "basic", "confirmed": true},
+    {"name": "Git", "level": "basic", "confirmed": true},
+    {"name": "English", "level": "B2", "confirmed": true},
+    {"name": "Kazakh", "level": "native", "confirmed": true},
+    {"name": "Power BI", "level": "basic", "confirmed": false}
+  ],
+  "experience": [
+    {
+      "title": "Data Analyst Intern",
+      "company": "Demo Retail LLP",
+      "start": "2026-06",
+      "end": "2026-08",
+      "summary": "Weekly sales reports in Excel and SQL; cleaned 50k-row datasets with pandas."
+    }
+  ],
+  "education": [
+    {
+      "degree": "BSc Information Systems (expected 2027)",
+      "institution": "Demo University, Almaty"
+    }
+  ],
+  "projects": [
+    {
+      "title": "Almaty housing prices analysis",
+      "summary": "Collected a public dataset, analysed it with pandas and presented charts."
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 
 An autonomous job-search agent for the Kazakhstan job market: the user gives a goal ("Junior Data Analyst in Almaty"). The agent then searches vacancies, analyses the skill match and decides between a learning plan and a tailored resume, and it prepares an application only with the user's approval. Design: [reports/proposal.md](reports/proposal.md). Progress: `reports/week-NN.md`.
 
-**Status (Week 11):** the Claude API adapter and the first working request are done. Tools and the agent loop come in Weeks 12–14.
+**Status (Week 12):** the Claude API adapter, a fictional mock dataset (`data/`) and three validated read-only tools (`get_profile`, `search_vacancies`, `analyze_match`) are done. LLM tool selection comes in Week 13 and the agent loop in Week 14.
 
 ### Setup
 
@@ -35,7 +35,35 @@ npm test        # instructor starter checks (Node 22+)
 | `src/career_agent/config.py` | Settings from environment / `.env`, with validation; the API key is never printed |
 | `src/career_agent/llm.py` | Claude adapter: `ClaudeClient.complete(messages, system, tools)` → `LLMResponse` (text, tool calls, usage); API failures become a classified `LLMError` (retryable or not) |
 | `src/career_agent/cli.py` | CLI entry point (`ask`) |
+| `src/career_agent/data.py` | Loads and validates the mock dataset; skill aliases and "learnable in N days" relations |
+| `src/career_agent/tools.py` | Tools: `get_profile`, `search_vacancies`, `analyze_match`. `validate_args` rejects malformed arguments before a tool runs; `run_tool` returns a result or `{"error", "message"}` |
+| `data/` | Fictional profile, 30 vacancies and the skill graph ([data/README.md](data/README.md)) |
 | `tests/test_llm.py` | Adapter and config tests |
+| `tests/test_tools.py` | Dataset, argument validation and tool behaviour tests |
+
+### How matching works (`analyze_match`)
+
+Deterministic code, not the LLM:
+
+1. **Classify required skills.** Each required skill of the vacancy is put in one group:
+   - **have** — the skill is among the profile's *confirmed* skills;
+   - **close** — a confirmed skill is related to it and the gap can be closed in ≤ 14 days (`data/skills.json`);
+   - **missing** — neither.
+2. **Score** = 80 × (have + 0.5 × close) / required + 20 × the same ratio for nice-to-have skills. The result is 0–100.
+3. **Recommendation:**
+
+   | Value | Condition |
+   |---|---|
+   | `apply` | nothing missing or close |
+   | `learn_then_apply` | only close skills |
+   | `stretch` | some skills missing, but score ≥ 50 |
+   | `poor_fit` | otherwise |
+
+The employer's free-text description is returned only under `employer_description_untrusted`, because it is untrusted input.
+
+### Troubleshooting
+
+On Windows with Smart App Control, `jiter 0.19.0` (an `anthropic` dependency) can be blocked with "DLL load failed ... application control policy". Installing `pip install "jiter==0.18.0"` works around it.
 
 The rest of this file is the instructor's original assignment text.
 

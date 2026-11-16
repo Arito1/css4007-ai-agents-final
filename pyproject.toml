@@ -5,6 +5,7 @@ description = "JumysAI Career Agent - autonomous job-search agent (CSS 4007 fina
 requires-python = ">=3.12"
 dependencies = [
     "anthropic>=2.8,<3",
+    "pydantic>=2.7,<3",
 ]
 
 [project.optional-dependencies]
